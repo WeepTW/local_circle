@@ -1,0 +1,21 @@
+"""Check known local secrets without printing secret values; inspect source + build output."""
+from pathlib import Path
+import subprocess
+root=Path(__file__).resolve().parent.parent
+secrets=[]
+for env in [root/'.env',root/'tmp/acceptance.env']:
+    if env.exists():
+        for line in env.read_text().splitlines():
+            key,_,value=line.partition('=')
+            if 'PASSWORD' in key and len(value)>=16: secrets.append(value.encode())
+tracked=subprocess.check_output(['git','-c',f'safe.directory={root}','ls-files','-z'],cwd=root).decode().split('\0')
+paths=[root/p for p in tracked if p]
+paths+=list((root/'frontend/dist').rglob('*'))
+failures=[]
+for p in paths:
+    if p.is_file():
+        content=p.read_bytes()
+        if any(secret in content for secret in secrets): failures.append(str(p.relative_to(root)))
+assert not failures, 'Known local secret detected in: '+', '.join(failures)
+assert '.env' not in tracked and 'tmp/acceptance.env' not in tracked
+print(f'PASS: no known local DB secrets in {len(paths)} tracked/build files; .env files untracked')

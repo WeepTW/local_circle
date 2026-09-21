@@ -1,0 +1,11 @@
+.env
+tmp/
+**/target/
+**/node_modules/
+**/dist/
+**/test-results/
+**/playwright-report/
+*.pdf
+*.docx
+.idea/
+.vscode/

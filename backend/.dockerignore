@@ -1,0 +1,4 @@
+*
+!target/
+target/*
+!target/local_circle-1.0.0.jar
