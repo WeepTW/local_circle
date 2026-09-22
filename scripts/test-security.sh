@@ -23,11 +23,16 @@ scan_container -v "$root:/repo:ro" \
   scan source -L /repo/backend/target/bom.json -L /repo/frontend/package-lock.json --format=json > "$report_dir/osv.json"
 # Keep SQLite advisory cache on Linux storage (WSL mounted Windows paths are slow).
 mkdir -p /tmp/local-circle-grype-cache
+scan_status=0
 for service in app web db; do
   image=$(docker inspect "$("${compose[@]}" ps -q "$service")" --format '{{.Image}}')
-  scan_container -v /var/run/docker.sock:/var/run/docker.sock -v "$report_dir:/reports" \
-    -v /tmp/local-circle-grype-cache:/root/.cache/grype \
+  if ! scan_container -v /var/run/docker.sock:/var/run/docker.sock -v "$report_dir:/reports" \
+    -e GRYPE_DB_CACHE_DIR=/cache -v /tmp/local-circle-grype-cache:/cache \
     anchore/grype@sha256:391bfda62888fb4e98ff5c4c81598f7431a3c1eac3f8519d69d1ff00df247c1d \
-    "docker:$image" --fail-on critical -o json --file "/reports/image-$service.json"
+    "docker:$image" --fail-on critical -o json --file "/reports/image-$service.json"; then
+    scan_status=1
+    docker rm -f "${project}_scan" >/dev/null 2>&1 || true
+  fi
 done
+[[ $scan_status == 0 ]] || { echo 'Image security gate failed; inspect every image report.' >&2; exit 1; }
 echo 'PASS: application, browser, dependency, secret and container security gates'
