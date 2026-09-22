@@ -17,6 +17,8 @@ Review date: 2026-09-22. Scope: application code, dependency manifests, database
 
 Expanded container scanning found two High OpenJDK matches in the old application image and Critical matches in the old Nginx image's package set. The application base now explicitly uses Temurin 21.0.12+8. The web image now installs the Alpine-maintained Nginx package after applying stable-branch package updates, without the unused curl package. The image gate remains enabled; all three image reports are collected before the suite fails.
 
+The original database image also contained Critical Go standard-library matches in `/usr/local/bin/gosu`. The database image now derives from official MySQL 8.4.11 with OS updates and rebuilds unchanged gosu 1.19 source using Go 1.26.8. The source archive checksum is pinned and privilege switching is smoke-tested during the image build. No vulnerability identifiers are suppressed.
+
 Initial OSV scan found advisory matches in Jackson Databind 2.21.4, Log4j API 2.24.3 and Tomcat 10.1.55. These are dependency-level findings, not proof that every advisory was exploitable through this application's configuration. Upgraded Jackson BOM to 2.21.5, Log4j to 2.25.5 and Tomcat to 10.1.59 without changing application contracts.
 
 References: [Jackson](https://github.com/advisories/GHSA-5gvw-p9qm-jgwh), [Log4j API](https://github.com/advisories/GHSA-qv9r-c865-cp47), [Tomcat](https://github.com/advisories/GHSA-9xv2-5v5q-p794).
