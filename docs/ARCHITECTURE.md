@@ -19,7 +19,7 @@ The full stack uses Nginx -> Spring Boot -> MySQL. Controllers validate requests
 
 The showcase is a separate static deployment. It uses synthetic, per-tab in-memory records, no API requests, no database connection and no persistent bank information. Refresh resets its state. Hash routing and a repository base path support deep-link refresh under `/local_circle/`.
 
-It demonstrates behavior, not a publicly deployed Java service. The Java application retains local-profile test identity handling and refuses that header outside the local profile. Real public backend hosting requires a separately implemented authentication provider.
+It demonstrates behavior, not a publicly deployed Java service. The Java application retains local-profile test identity handling and refuses that header outside the local profile. Production login is outside the requested scope; the full backend remains a local application.
 
 ## Reliability
 

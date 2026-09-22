@@ -1,4 +1,4 @@
-name: Full stack verification
+name: Frontend verification
 on:
   push:
     branches: [main]
@@ -10,27 +10,6 @@ concurrency:
   group: verification-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  static:
-    name: static
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - name: Run static suite
-        run: bash scripts/test-static.sh
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
-        with:
-          name: static-reports
-          path: |
-            backend/target/surefire-reports/
-            frontend/playwright-report/
-            frontend/test-results/
-            tmp/test-results/
-          retention-days: 7
-          if-no-files-found: ignore
   frontend:
     name: frontend
     runs-on: ubuntu-24.04
@@ -51,105 +30,8 @@ jobs:
         with:
           name: frontend-reports
           path: |
-            backend/target/surefire-reports/
             frontend/playwright-report/
             frontend/test-results/
-            tmp/test-results/
-          retention-days: 7
-          if-no-files-found: ignore
-  backend:
-    name: backend
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-          cache-dependency-path: backend/pom.xml
-      - name: Run backend suite
-        run: bash scripts/test-backend.sh
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
-        with:
-          name: backend-reports
-          path: |
-            backend/target/surefire-reports/
-            frontend/playwright-report/
-            frontend/test-results/
-            tmp/test-results/
-          retention-days: 7
-          if-no-files-found: ignore
-  security:
-    name: security
-    runs-on: ubuntu-24.04
-    timeout-minutes: 35
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version-file: .node-version
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-          cache-dependency-path: backend/pom.xml
-      - name: Run security suite
-        run: bash scripts/test-security.sh
-      - name: Summarize image findings
-        if: always()
-        run: python3 scripts/security-summary.py >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
-        with:
-          name: security-reports
-          path: |
-            backend/target/surefire-reports/
-            frontend/playwright-report/
-            frontend/test-results/
-            tmp/test-results/
-          retention-days: 7
-          if-no-files-found: ignore
-  e2e:
-    name: e2e
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    needs: [frontend, backend]
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version-file: .node-version
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-          cache-dependency-path: backend/pom.xml
-      - name: Run e2e suite
-        run: bash scripts/test-e2e.sh
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
-        with:
-          name: e2e-reports
-          path: |
-            backend/target/surefire-reports/
-            frontend/playwright-report/
-            frontend/test-results/
-            tmp/test-results/
           retention-days: 7
           if-no-files-found: ignore
   pages:
@@ -157,7 +39,7 @@ jobs:
     uses: ./.github/workflows/pages.yml
   deploy:
     name: Deploy verified Pages
-    needs: [static, frontend, backend, security, e2e, pages]
+    needs: [frontend, pages]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 10

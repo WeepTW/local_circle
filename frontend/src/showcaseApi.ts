@@ -1,7 +1,6 @@
 import type { Actor, Product, Account, Preference, Save } from "./types";
 import type { httpApi } from "./httpApi";
 import { ApiError } from "./errors";
-import { parseFeed, isFresh, type MarketFeed } from "./market";
 
 // Isolated, synthetic browser state. No credentials, network access or bank integration.
 let identity = 1,
@@ -79,17 +78,6 @@ const accountOwners = [
   { id: 40, owner: 4, last4: "4444" },
 ];
 const rows = new Map<number, { owner: number; value: Preference }>();
-export function applyShowcaseQuotes(input: MarketFeed) {
-  const feed = parseFeed(input);
-  for (const quote of feed.quotes) {
-    if (feed.source !== "sample" && !isFresh(quote)) continue;
-    const product = products.find(p => p.productCode === quote.symbol);
-    if (product && product.price !== quote.price) {
-      product.price = quote.price;
-      product.version++;
-    }
-  }
-}
 const fail = (status: number, detail: string): never => {
   throw new ApiError({ status, code: "SHOWCASE_ERROR", detail, traceId: "" });
 };

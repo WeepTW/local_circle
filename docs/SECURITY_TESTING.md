@@ -25,10 +25,14 @@ The functional baseline includes SQL injection and XSS prevention. The independe
 
 - All security assertions must pass. Java reports must exist, include integration tests and contain no skips.
 - Gitleaks findings block. npm vulnerabilities at moderate or above block. Every OSV finding blocks.
-- Container Critical findings block. All lower-severity findings remain in the uploaded JSON reports and require review; a passing job does not mean images have zero vulnerabilities.
+- Container Critical findings block. All lower-severity findings remain in the local JSON reports and require review; a passing job does not mean images have zero vulnerabilities.
 - Scanner errors, unavailable advisory databases and timeouts fail closed. Scanner images and Actions use immutable digests/commits. No blanket ignore file or automatic suppression is used.
-- Reports are retained for seven days. Raw credentials and environment files are never included. Container failure diagnostics are redacted before storage.
+- Local reports are written to `tmp/test-results`; GitHub frontend reports are retained for seven days. Raw credentials and environment files are never included. Container failure diagnostics are redacted before storage.
 
 ## Limits
 
-This is automated verification, not a penetration-test certification. The local role selector is not production authentication. TLS, real login/session/CSRF controls, rate limiting against sustained abuse, production authorization, quote-provider credentials and Internet deployment are not certified by these tests. No load-based denial-of-service traffic is generated. Real bank APIs are outside the test target scope.
+This is automated verification, not a penetration-test certification. The local role selector is not production authentication. TLS, real login/session/CSRF controls, rate limiting against sustained abuse, production authorization and Internet deployment are not certified by these tests. No load-based denial-of-service traffic is generated. Real bank APIs are outside the test target scope.
+
+## Execution scope
+
+GitHub runs only frontend unit/build/audit and static Pages browser tests. All backend, database, API security, full-stack browser and image checks remain in the local `scripts/test-all.sh` pipeline. Production login and bank market-data integration are outside the requested project scope.

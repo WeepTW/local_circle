@@ -1,21 +1,17 @@
 import { test, expect } from "@playwright/test";
-test("sample quotes update the catalog while saved amounts remain unchanged", async ({ page }) => {
-  await page.goto("./#/preferences");
-  await page.getByRole("button", { name: "＋ 保存喜好" }).click();
-  await page.getByLabel("預計數量", { exact: true }).fill("5");
-  await page.getByRole("button", { name: "確認保存", exact: true }).click();
-  await page.getByRole("link", { name: "商品目錄", exact: true }).click();
-  const panel = page.getByRole("region", { name: "行情來源" });
-  await expect(panel).toContainText("非即時報價");
-  await panel.getByRole("button", { name: "套用範例報價" }).click();
-  await expect(page.locator(".product-card").filter({hasText: "0050"})).toContainText("60.25");
-  await page.getByRole("link", { name: "我的喜好", exact: true }).click();
-  await expect(page.locator("tbody")).toContainText("300.3");
-  await page.getByRole("link", { name: "商品目錄", exact: true }).click();
-  await page.route("**/data/quotes.sample.json", route => route.fulfill({status: 503, body: "unavailable"}));
-  await panel.getByRole("button", { name: "更新行情", exact: true }).click();
-  await expect(panel.getByRole("alert")).toBeVisible();
-  await expect(panel.getByRole("button", { name: "套用範例報價" })).toBeDisabled();
+test("catalog uses reference prices without market-data requests", async ({ page }) => {
+  const dataRequests: string[] = [];
+  page.on("request", request => {
+    if (["fetch", "xhr", "websocket"].includes(request.resourceType())) dataRequests.push(request.url());
+  });
+  await page.goto("./#/products");
+  await expect(page.locator(".product-card")).toHaveCount(3);
+  await expect(page.locator(".product-card").filter({ hasText: "0050" })).toContainText("NT$ 60");
+  await expect(page.getByRole("region", { name: "行情來源" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "更新行情" })).toHaveCount(0);
+  await page.clock.install();
+  await page.clock.fastForward(61000);
+  expect(dataRequests).toEqual([]);
 });
 test("Pages survives subpath routing and supports isolated CRUD without backend requests", async ({
   page,

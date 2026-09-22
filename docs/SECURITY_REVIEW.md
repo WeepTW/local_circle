@@ -8,8 +8,6 @@ Review date: 2026-09-22. Scope: application code, dependency manifests, database
 - Added bounded HTTP, pool, query, transaction and proxy waits. Centralized mutation lifecycle rejects duplicate in-flight calls.
 - Removed prominent sample-data branding while keeping an accurate reference-data notice. This does not turn the local identity selector into authentication.
 - Public showcase uses isolated in-memory data and performs no API requests. Refresh clears its state. It contains no bank data or secrets.
-- The catalog loads synthetic quotes from a same-origin static JSON file. Explicit application changes only current catalog prices; saved snapshots remain immutable. Invalid, unsupported or duplicate symbols and non-finite prices are rejected. Live-mode prices older than two minutes are not applied.
-- The read-only provider adapter keeps credentials local and exports normalized prices to a gitignored file. Authentication and live provider access remain unverified until authorized credentials and SDK are supplied. Sample quotes are not advertised as current market prices.
 - Applied CSP to the static showcase; full deployment retains Nginx CSP, nosniff and frame restrictions.
 - Public release uses an explicit allowlist, excluding private inputs, internal instructions, local logs, environment files and prior development history.
 
@@ -42,4 +40,8 @@ Tomcat 10.1.58 was not published after its release vote failed; the actual publi
 
 ## Limits
 
-The backend is for local use until a real identity provider, TLS boundary and operational controls are added. Pages demonstrates behavior with synthetic data; it is not a deployed banking API. These checks do not certify absence of all vulnerabilities. The expanded CI now includes container image vulnerability scans; see [coverage and blocking policy](SECURITY_TESTING.md). Formal compliance certification remains outside this review.
+The backend remains local-only; production login and public backend deployment are outside the requested scope. Pages demonstrates behavior with synthetic data; it is not a deployed banking API. These checks do not certify absence of all vulnerabilities. The local security suite includes container image vulnerability scans; GitHub CI verifies only the frontend; see [coverage and blocking policy](SECURITY_TESTING.md). Formal compliance certification remains outside this review.
+
+## Current scope
+
+Market-data integration and production login are excluded at the user's request. The historical test counts above describe the earlier review, not the current frontend-only CI. Full local verification remains available via `scripts/test-all.sh`.

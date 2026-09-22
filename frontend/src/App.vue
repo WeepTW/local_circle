@@ -4,7 +4,6 @@ import { money } from "./api";
 import { productName } from "./format";
 import PreferenceForm from "./components/PreferenceForm.vue";
 import ProductForm from "./components/ProductForm.vue";
-import MarketPanel from "./components/MarketPanel.vue";
 const isShowcase = import.meta.env.VITE_SHOWCASE === "true";
 const {
   actor,
@@ -85,7 +84,6 @@ const {
         </button>
       </div>
       <p v-if="notice" role="status" class="success">{{ notice }}</p>
-      <MarketPanel v-if="isShowcase && section === 'products'" :disabled="busy || loading || showForm || !!productEditing" @updated="load" />
       <p v-if="loading" role="status" class="loading">正在讀取資料…</p>
       <template v-else-if="actor">
         <template v-if="section === 'preferences'">
