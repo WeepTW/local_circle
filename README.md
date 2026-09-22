@@ -38,7 +38,7 @@ Run `35670087560` built artifacts with restrictive permissions because secret-fi
 
 ## Run the complete application
 
-Requirements: Java 21, Maven 3.9+, Node 22.12+, Docker Compose, Bash and Python 3. Use a Docker-enabled WSL/Linux shell.
+Requirements: Java 21, Maven 3.9+, Node 24 (version pinned in `.node-version`), Docker Compose, Bash and Python 3. Use a Docker-enabled WSL/Linux shell.
 
 ```bash
 bash scripts/bootstrap.sh
@@ -80,7 +80,18 @@ cd ..
 bash scripts/test-all.sh
 ```
 
-The full gate uses an isolated Compose project on ports 8188/3317, initializes a fresh schema, runs backend/frontend tests and real browser flows. It stops only the acceptance instance afterward; normal application data is untouched.
+The full gate runs independent suites. Database-backed suites create a unique Compose project with random loopback ports and restricted temporary credentials, then remove only their own containers and volumes. Normal application data is untouched. Do not run multiple suites simultaneously in the same checkout because Maven and frontend build outputs are shared.
+
+| Command | Coverage |
+|---|---|
+| `bash scripts/test-static.sh` | Shell syntax, architecture, quote parser, known-secret checks |
+| `bash scripts/test-frontend.sh` | Node 24 unit tests, build and dependency audit |
+| `bash scripts/test-backend.sh` | Fresh schema, all Java tests, zero skipped integration tests |
+| `bash scripts/test-security.sh` | API abuse, stored XSS, secrets, dependencies, runtime hardening and image vulnerabilities |
+| `bash scripts/test-e2e.sh` | Complete application and real browser flows |
+| `bash scripts/test-pages.sh` | Pages build, subpath routing and sample quote behavior |
+
+Security checks exceed the functional baseline; see [security coverage and gate policy](docs/SECURITY_TESTING.md). Reports are written to `tmp/test-results`, Maven reports and Playwright report directories. Scanner/network errors fail the suite; they do not count as clean scans.
 
 ```bash
 # Build and verify the static showcase
@@ -119,4 +130,4 @@ POST accepts productId, accountId, plannedQuantity; PUT adds version. DELETE req
 
 ## Automation
 
-GitHub Actions verifies the complete stack and builds/tests/deploys Pages. Actions are pinned to commit SHAs with minimal deployment permissions. Public release includes source code and technical documentation; private input documents, local logs, environment files and development history are excluded.
+GitHub Actions runs separate static, frontend, backend, security, E2E and reusable Pages jobs on Ubuntu 24.04. Node 24, setup-java v6 / Temurin 21 and pinned Action commits provide explicit toolchains. Only a successful main-branch run of all suites can deploy Pages. Pull requests only verify; manual runs are available through Full stack verification. Reports are retained for seven days. Public release excludes private input documents, environment files and development history.

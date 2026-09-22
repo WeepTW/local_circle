@@ -1,9 +1,12 @@
 """Check known local secrets without printing secret values; inspect source + build output."""
 from pathlib import Path
 import subprocess
+import os
 root=Path(__file__).resolve().parent.parent
 secrets=[]
-for env in [root/'.env',root/'tmp/acceptance.env']:
+env_files = [root/'.env', root/'tmp/acceptance.env']
+if os.environ.get('ENV_FILE'): env_files.append(Path(os.environ['ENV_FILE']))
+for env in env_files:
     if env.exists():
         for line in env.read_text().splitlines():
             key,_,value=line.partition('=')
@@ -18,4 +21,6 @@ for p in paths:
         if any(secret in content for secret in secrets): failures.append(str(p.relative_to(root)))
 assert not failures, 'Known local secret detected in: '+', '.join(failures)
 assert '.env' not in tracked and 'tmp/acceptance.env' not in tracked
+assert not any(Path(p).suffix in ('.pem', '.p12', '.pfx', '.ini') or
+               (Path(p).name.startswith('.env') and Path(p).name != '.env.example') for p in tracked if p), 'Private configuration file is tracked'
 print(f'PASS: no known local DB secrets in {len(paths)} tracked/build files; .env files untracked')

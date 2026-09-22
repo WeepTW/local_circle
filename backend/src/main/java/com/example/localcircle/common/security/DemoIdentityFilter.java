@@ -54,7 +54,8 @@ public class DemoIdentityFilter extends OncePerRequestFilter {
         throw new DomainException(
             401, "DEMO_DISABLED", "Demo identity is only enabled in the local profile.");
       String header = request.getHeader("X-Demo-User-Id");
-      if (header == null || !header.matches("[1-9][0-9]{0,17}"))
+      if (Collections.list(request.getHeaders("X-Demo-User-Id")).size() != 1
+          || header == null || !header.matches("[1-9][0-9]{0,17}"))
         throw new DomainException(401, "UNAUTHENTICATED", "Select a valid local demo identity.");
       request.setAttribute("actor", service.actor(Long.parseLong(header)));
     } catch (DomainException e) {

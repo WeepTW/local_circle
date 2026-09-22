@@ -38,4 +38,4 @@ Tomcat 10.1.58 was not published after its release vote failed; the actual publi
 
 ## Limits
 
-The backend is for local use until a real identity provider, TLS boundary and operational controls are added. Pages demonstrates behavior with synthetic data; it is not a deployed banking API. These checks do not certify absence of all vulnerabilities. Container operating-system vulnerabilities and formal compliance certification are outside this review.
+The backend is for local use until a real identity provider, TLS boundary and operational controls are added. Pages demonstrates behavior with synthetic data; it is not a deployed banking API. These checks do not certify absence of all vulnerabilities. The expanded CI now includes container image vulnerability scans; see [coverage and blocking policy](SECURITY_TESTING.md). Formal compliance certification remains outside this review.

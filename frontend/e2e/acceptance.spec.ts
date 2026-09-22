@@ -8,7 +8,7 @@ test('save, edit, cancel/confirm delete, identity and mobile navigation',async({
  await page.getByLabel('預計數量',{exact:true}).fill('5')
  await page.getByRole('button',{name:'確認保存',exact:true}).click()
  await expect(page.locator('tbody tr')).toHaveCount(1);await expect(page.locator('tbody')).toContainText('300.3');await expect(page.locator('tbody')).toContainText('user@example.test');await expect(page.locator('tbody')).toContainText('元大台灣50 ETF')
- await page.screenshot({path:'../docs/screenshots/preferences.png',fullPage:true})
+ await page.screenshot({path:'../tmp/test-results/e2e/preferences.png',fullPage:true})
  await page.getByRole('button',{name:'編輯',exact:true}).click();await page.getByRole('combobox',{name:'商品',exact:true}).selectOption('2');await page.getByRole('combobox',{name:'預計扣款帳號',exact:true}).selectOption('11');await page.getByLabel('預計數量',{exact:true}).fill('3');await page.getByRole('button',{name:'確認保存',exact:true}).click()
  await expect(page.locator('tbody')).toContainText('540.54');await expect(page.locator('tbody')).toContainText('******1122')
  await page.getByLabel('檢視角色').selectOption('2');await expect(page.getByText('從第一個喜好開始')).toBeVisible()
@@ -16,7 +16,7 @@ test('save, edit, cancel/confirm delete, identity and mobile navigation',async({
  await page.getByRole('button',{name:'刪除',exact:true}).click();await page.getByRole('button',{name:'取消',exact:true}).click();await expect(page.locator('tbody tr')).toHaveCount(1)
  await page.getByRole('button',{name:'刪除',exact:true}).click();await page.getByRole('button',{name:'確認刪除',exact:true}).click();await expect(page.getByText('從第一個喜好開始')).toBeVisible()
  await page.setViewportSize({width:390,height:844});await page.getByRole('link',{name:'帳戶參照',exact:true}).click();await expect(page.getByText('******9666',{exact:true})).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true)
- await page.screenshot({path:'../docs/screenshots/mobile-accounts.png',fullPage:true})
+ await page.screenshot({path:'../tmp/test-results/e2e/mobile-accounts.png',fullPage:true})
 })
 test('admin ownership and stored XSS render safely in the actual browser',async({page,request})=>{
  const admin={'X-Demo-User-Id':'3'},user={'X-Demo-User-Id':'1'}
@@ -31,7 +31,7 @@ test('admin ownership and stored XSS render safely in the actual browser',async(
   const product=(await (await request.get('/api/v1/products',{headers:admin})).json()).find((p:{productId:number})=>p.productId===1)
   for(const uid of ['1','4'])expect((await request.patch('/api/v1/admin/products/1',{headers:{'X-Demo-User-Id':uid},data:{productName:'forbidden',price:60,feeRate:.001,active:true,version:product.version}})).status()).toBe(403)
   await page.getByLabel('檢視角色').selectOption('4');await page.getByRole('link',{name:'商品管理',exact:true}).click();await expect(page.getByRole('button',{name:'編輯商品',exact:true})).toHaveCount(1)
-  await page.screenshot({path:'../docs/screenshots/admin.png',fullPage:true});expect(errors).toEqual([])
+  await page.screenshot({path:'../tmp/test-results/e2e/admin.png',fullPage:true});expect(errors).toEqual([])
   const response=await request.get('/preferences');expect(response.headers()['content-security-policy']).toContain("script-src 'self'")
   expect((await request.post('/api/v1/preferences',{headers:user,data:{productId:1,accountId:20,plannedQuantity:5}})).status()).toBe(404)
  } finally {

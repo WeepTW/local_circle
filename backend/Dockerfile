@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-jammy
+FROM eclipse-temurin:21.0.12_8-jdk-jammy
 WORKDIR /app
 COPY --chmod=0444 target/local_circle-1.0.0.jar app.jar
 USER 10001:10001

@@ -10,6 +10,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -48,5 +50,15 @@ public class ProblemAdvice {
   @ExceptionHandler(Exception.class)
   ResponseEntity<ApiProblem> unexpected(Exception e, HttpServletRequest r) {
     return problem(500, "INTERNAL_ERROR", "Unable to complete request.", r);
+  }
+
+  @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+  ResponseEntity<ApiProblem> unsupportedMedia(Exception e, HttpServletRequest r) {
+    return problem(415, "UNSUPPORTED_MEDIA_TYPE", "Use application/json.", r);
+  }
+
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  ResponseEntity<ApiProblem> unsupportedMethod(Exception e, HttpServletRequest r) {
+    return problem(405, "METHOD_NOT_ALLOWED", "Unsupported request method.", r);
   }
 }
