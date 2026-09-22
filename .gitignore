@@ -9,3 +9,8 @@ tmp/
 *.docx
 .idea/
 .vscode/
+**/__pycache__/
+*.ini
+*.pfx
+*.p12
+*.pem
