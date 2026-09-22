@@ -1,6 +1,6 @@
 import { computed, onMounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { api, ApiError, money, setIdentity } from "../api";
+import { useRoute } from "vue-router";
+import { api, ApiError, money } from "../api";
 import type {
   Actor,
   Product,
@@ -10,15 +10,13 @@ import type {
   ProductUpdate,
 } from "../types";
 export function useRegistry() {
-  const route = useRoute(),
-    router = useRouter();
+  const route = useRoute();
   const actor = ref<Actor>(),
     products = ref<Product[]>([]),
     allProducts = ref<Product[]>([]),
     accounts = ref<Account[]>([]),
     preferences = ref<Preference[]>([]);
-  const identity = ref("1"),
-    loading = ref(false),
+  const loading = ref(false),
     busy = ref(false),
     error = ref(""),
     notice = ref(""),
@@ -79,21 +77,6 @@ export function useRegistry() {
     } finally {
       if (g === generation) loading.value = false;
     }
-  }
-  async function changeIdentity() {
-    setIdentity(identity.value);
-    actor.value = undefined;
-    preferences.value = [];
-    accounts.value = [];
-    products.value = [];
-    allProducts.value = [];
-    showForm.value = false;
-    editing.value = undefined;
-    deleting.value = undefined;
-    productEditing.value = undefined;
-    notice.value = "";
-    await router.push("/preferences");
-    await load();
   }
   async function mutate(
     operation: () => Promise<unknown>,
@@ -169,7 +152,6 @@ export function useRegistry() {
     allProducts,
     accounts,
     preferences,
-    identity,
     loading,
     busy,
     error,
@@ -183,7 +165,6 @@ export function useRegistry() {
     total,
     fees,
     load,
-    changeIdentity,
     save,
     remove,
     updateProduct,

@@ -8,7 +8,7 @@ import type {
   Problem,
 } from "./types";
 import { ApiError } from "./errors";
-let identity = "1";
+let identity = "";
 export const setHttpIdentity = (id: string) => {
   identity = id;
 };

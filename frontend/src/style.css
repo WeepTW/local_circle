@@ -497,3 +497,12 @@ td {
     padding: 23px;
   }
 }
+
+.login-shell { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
+.login-card { width: min(100%, 480px); padding: 32px; }
+.login-fields { border: 0; margin: 24px 0 0; padding: 0; display: grid; gap: 12px; min-width: 0; }
+.login-fields input, .login-fields select { width: 100%; min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: white; }
+.login-fields label { font-weight: 650; }
+.login-hint { margin: 0 0 8px; font-size: 13px; }
+.session-controls { display: flex; align-items: center; gap: 12px; }
+@media (max-width: 520px) { .login-shell { padding: 16px; } .login-card { padding: 24px 20px; } }

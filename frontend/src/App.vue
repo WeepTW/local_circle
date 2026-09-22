@@ -4,6 +4,7 @@ import { money } from "./api";
 import { productName } from "./format";
 import PreferenceForm from "./components/PreferenceForm.vue";
 import ProductForm from "./components/ProductForm.vue";
+const emit = defineEmits<{ logout: [] }>();
 const isShowcase = import.meta.env.VITE_SHOWCASE === "true";
 const {
   actor,
@@ -11,7 +12,6 @@ const {
   allProducts,
   accounts,
   preferences,
-  identity,
   loading,
   busy,
   error,
@@ -25,7 +25,6 @@ const {
   total,
   fees,
   load,
-  changeIdentity,
   save,
   remove,
   updateProduct,
@@ -63,18 +62,10 @@ const {
           <h1>{{ title }}</h1>
           <p class="muted">整理你的金融商品喜好，保留每次規劃。</p>
         </div>
-        <label class="identity"
-          >檢視角色<select
-            v-model="identity"
-            @change="changeIdentity"
-            :disabled="busy || loading"
-          >
-            <option value="1">一般使用者</option>
-            <option value="2">其他使用者</option>
-            <option value="3">台股商品管理員</option>
-            <option value="4">全球商品管理員</option>
-          </select></label
-        >
+        <div class="session-controls">
+          <span>{{ actor?.userName }}</span>
+          <button class="ghost" :disabled="busy || loading" @click="emit('logout')">登出</button>
+        </div>
       </header>
       <div v-if="error" role="alert" class="error">
         <strong>操作未完成</strong>

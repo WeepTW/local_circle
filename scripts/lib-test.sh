@@ -8,7 +8,7 @@ check_node() {
 }
 install_frontend() { check_node; (cd frontend && npm ci); }
 build_backend() { (cd backend && mvn -B -DskipTests package); }
-build_frontend() { (cd frontend && VITE_SHOWCASE=false VITE_BASE_PATH=/ npm run build); }
+build_frontend() { (cd frontend && VITE_DEMO_LOGIN=true VITE_SHOWCASE=false VITE_BASE_PATH=/ npm run build); }
 init_stack() {
   local kind=$1
   mkdir -p tmp/ci tmp/test-results

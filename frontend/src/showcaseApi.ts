@@ -3,7 +3,7 @@ import type { httpApi } from "./httpApi";
 import { ApiError } from "./errors";
 
 // Isolated, synthetic browser state. No credentials, network access or bank integration.
-let identity = 1,
+let identity = 0,
   sequence = 1;
 const actors: Actor[] = [
   {

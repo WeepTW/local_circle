@@ -4,7 +4,7 @@ import {
   createWebHistory,
   createWebHashHistory,
 } from "vue-router";
-import App from "./App.vue";
+import AuthGate from "./auth/AuthGate.vue";
 import "./style.css";
 const Page = { render: () => null };
 const router = createRouter({
@@ -21,4 +21,4 @@ const router = createRouter({
     { path: "/:pathMatch(.*)*", redirect: "/preferences" },
   ],
 });
-createApp(App).use(router).mount("#app");
+createApp(AuthGate).use(router).mount("#app");

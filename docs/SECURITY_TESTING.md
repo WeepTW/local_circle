@@ -31,8 +31,8 @@ The functional baseline includes SQL injection and XSS prevention. The independe
 
 ## Limits
 
-This is automated verification, not a penetration-test certification. The local role selector is not production authentication. TLS, real login/session/CSRF controls, rate limiting against sustained abuse, production authorization and Internet deployment are not certified by these tests. No load-based denial-of-service traffic is generated. Real bank APIs are outside the test target scope.
+This is automated verification, not a penetration-test certification. The public demonstration login is not production authentication. TLS, real login/session/CSRF controls, rate limiting against sustained abuse, production authorization and Internet deployment are not certified by these tests. No load-based denial-of-service traffic is generated. Real bank APIs are outside the test target scope.
 
 ## Execution scope
 
-GitHub runs only frontend unit/build/audit and static Pages browser tests. All backend, database, API security, full-stack browser and image checks remain in the local `scripts/test-all.sh` pipeline. Production login and bank market-data integration are outside the requested project scope.
+GitHub runs only frontend unit/build/audit and static Pages browser tests. All backend, database, API security, full-stack browser and image checks remain in the local `scripts/test-all.sh` pipeline. Bank market-data integration is outside the requested scope. The modular demo login is tested, while a real server-side login provider is not implemented.

@@ -4,6 +4,7 @@ it("isolates ownership, preserves snapshots and enforces product ACL/version", a
   const { showcaseApi: api, setShowcaseIdentity: set } = await import(
     "./showcaseApi"
   );
+  set("1");
   const p = await api.save({ productId: 1, accountId: 10, plannedQuantity: 5 });
   expect(p.totalAmount).toBe(300.3);
   await expect(

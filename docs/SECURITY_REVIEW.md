@@ -40,8 +40,10 @@ Tomcat 10.1.58 was not published after its release vote failed; the actual publi
 
 ## Limits
 
-The backend remains local-only; production login and public backend deployment are outside the requested scope. Pages demonstrates behavior with synthetic data; it is not a deployed banking API. These checks do not certify absence of all vulnerabilities. The local security suite includes container image vulnerability scans; GitHub CI verifies only the frontend; see [coverage and blocking policy](SECURITY_TESTING.md). Formal compliance certification remains outside this review.
+The backend remains local-only; server-side authentication and public backend deployment are not implemented. Pages demonstrates behavior with synthetic data; it is not a deployed banking API. These checks do not certify absence of all vulnerabilities. The local security suite includes container image vulnerability scans; GitHub CI verifies only the frontend; see [coverage and blocking policy](SECURITY_TESTING.md). Formal compliance certification remains outside this review.
 
 ## Current scope
 
-Market-data integration and production login are excluded at the user's request. The historical test counts above describe the earlier review, not the current frontend-only CI. Full local verification remains available via `scripts/test-all.sh`.
+Market-data integration is excluded. The revised scope includes a modular demonstration login screen; server-side authentication remains unimplemented. The historical test counts above describe the earlier review, not the current frontend-only CI. Full local verification remains available via `scripts/test-all.sh`.
+
+Demo credentials are intentionally public fixtures and are excluded from default production assets. Login errors, logout, account isolation and build-time exclusion are covered by frontend tests.

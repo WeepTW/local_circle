@@ -19,8 +19,10 @@ The full stack uses Nginx -> Spring Boot -> MySQL. Controllers validate requests
 
 The showcase is a separate static deployment. It uses synthetic, per-tab in-memory records, no API requests, no database connection and no persistent bank information. Refresh resets its state. Hash routing and a repository base path support deep-link refresh under `/local_circle/`.
 
-It demonstrates behavior, not a publicly deployed Java service. The Java application retains local-profile test identity handling and refuses that header outside the local profile. Production login is outside the requested scope; the full backend remains a local application.
+It demonstrates behavior, not a publicly deployed Java service. The Java application retains local-profile test identity handling and refuses that header outside the local profile. A modular login screen selects a build-time provider. Public demo credentials live in `auth/demo/`; default production builds use a provider that refuses login until server authentication is implemented. The full backend remains a local application.
 
 ## Reliability
 
 Writes reject duplicate in-flight submission in the UI. Stale responses cannot replace a newer identity's state. HTTP requests have a 15-second timeout; JDBC calls have a 10-second query timeout, pool acquisition 10 seconds and transaction timeout 15 seconds. Nginx has bounded upstream connection/read/send timeouts. These limits prevent indefinite waiting; they are not performance guarantees.
+
+`AuthGate` mounts the registry only after explicit login and clears it on logout. Role switching uses logout/login. Demo account validation is browser-only presentation behavior, not a backend security boundary.

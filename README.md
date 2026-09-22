@@ -10,7 +10,7 @@ The website uses synthetic reference data stored only in the current browser tab
 
 ## Scope
 
-Market-data integration and a production login system are out of scope. No E.SUN SDK, quote exporter, market-data file or polling UI is included. Product management maintains reference prices; previously saved amount snapshots remain unchanged.
+Market-data integration is out of scope. The login screen supports a removable demonstration account provider; a real server-side login provider is not implemented. No E.SUN SDK, quote exporter, market-data file or polling UI is included. Product management maintains reference prices; previously saved amount snapshots remain unchanged.
 
 ## CI incident
 
@@ -38,7 +38,7 @@ docker compose stop          # preserve data
 docker compose up -d --wait  # restart
 ```
 
-Keep a WSL session open while using the application. The local role selector is a development identity mechanism, not production authentication. The default backend profile rejects it. Do not expose the local API to an untrusted network.
+Keep a WSL session open while using the application. The demonstration login selects a development identity; its public credentials are not production authentication. The default backend profile rejects it. Do not expose the local API to an untrusted network.
 
 ## Development
 
@@ -51,7 +51,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=local
 # Frontend terminal, from repository root
 cd frontend
 npm ci
-npm run dev
+VITE_DEMO_LOGIN=true npm run dev
 ```
 
 Vite on 5173 proxies API requests to 8089. The browser never connects to MySQL. The application database role can execute procedures but cannot directly read or modify tables.
@@ -71,7 +71,7 @@ The full gate runs independent suites. Database-backed suites create a unique Co
 | Command | Coverage |
 |---|---|
 | `bash scripts/test-static.sh` | Shell syntax, architecture, known-secret checks |
-| `bash scripts/test-frontend.sh` | Node 24 unit tests, build and dependency audit |
+| `bash scripts/test-frontend.sh` | Node 24 unit tests, demo/production builds, demo credential exclusion and dependency audit |
 | `bash scripts/test-backend.sh` | Fresh schema, all Java tests, zero skipped integration tests |
 | `bash scripts/test-security.sh` | API abuse, stored XSS, secrets, dependencies, runtime hardening and image vulnerabilities |
 | `bash scripts/test-e2e.sh` | Complete application and real browser flows |
@@ -82,7 +82,7 @@ Security checks exceed the functional baseline; see [security coverage and gate 
 ```bash
 # Build and verify the static showcase
 cd frontend
-VITE_SHOWCASE=true VITE_BASE_PATH=/local_circle/ npm run build
+VITE_DEMO_LOGIN=true VITE_SHOWCASE=true VITE_BASE_PATH=/local_circle/ npm run build
 npx playwright test --config=pages.config.ts
 ```
 
@@ -119,3 +119,11 @@ POST accepts productId, accountId, plannedQuantity; PUT adds version. DELETE req
 GitHub Actions runs frontend unit tests, dependency audit/build and the reusable Pages browser verification on Ubuntu 24.04 with Node 24 and pinned Action commits. Only successful frontend and Pages jobs on main can deploy Pages. Pull requests only verify; manual runs are available through Frontend verification. Reports are retained for seven days.
 
 Backend, database, full-stack E2E, static and expanded security checks remain available locally through `bash scripts/test-all.sh`. They do not run in GitHub Actions and are not prerequisites for static Pages deployment. A green GitHub run therefore verifies only the frontend. Public release excludes private input documents, environment files and development history.
+
+## Modular login
+
+The login screen uses a `LoginProvider` contract in `frontend/src/auth/contracts.ts`. Public sample accounts and their verification live only in `frontend/src/auth/demo/`. The dropdown fills credentials; login still requires explicit submission. Logout clears the active identity and unmounts all registry screens. Sessions and passwords are not persisted; refreshing requires login again. Role changes use logout/login, preserving existing ownership and product permissions.
+
+Local deploy/test scripts and Pages builds explicitly set `VITE_DEMO_LOGIN=true`. A plain `npm run build` excludes the demo module. Vite chooses the provider at build time; `scripts/test-frontend.sh` checks that production assets contain none of the sample passwords.
+
+For a production integration, leave `VITE_DEMO_LOGIN` unset or false and replace `frontend/src/auth/productionProvider.ts` with server-verified login. The default provider refuses every login. The complete `auth/demo/` folder can then be deleted without changing the login screen; remove the demo-only browser fixtures and explicit demo flags from your deployment/tests too. Replace the local HTTP identity header with real server session handling when implementing that provider. Disabling dropdown hints alone does not secure the backend. `RegistryRepository` remains unchanged.
