@@ -1,0 +1,530 @@
+[
+  {
+    "image": "image-app",
+    "digest": "sha256:f52c81d8ddaf1500c73ddd97d8cba83264cde98ba9dce2e47be9a0f4e1e88dbe",
+    "package": "zlib",
+    "version": "1.3.2-r0",
+    "purl": "pkg:apk/alpine/zlib@1.3.2-r0?arch=x86_64&distro=alpine-3.24.2",
+    "id": "CVE-2026-85091",
+    "severity": "High",
+    "fix": {
+      "versions": [],
+      "state": ""
+    },
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2026-85091",
+    "status": "unresolved",
+    "action": "Affected zlib remains present. No fixed version listed; upstream stable is 1.3.2. Keep blocked pending a verified distro fix or tested upstream patch."
+  },
+  {
+    "image": "image-app",
+    "digest": "sha256:f52c81d8ddaf1500c73ddd97d8cba83264cde98ba9dce2e47be9a0f4e1e88dbe",
+    "package": "busybox",
+    "version": "1.37.0-r31",
+    "purl": "pkg:apk/alpine/busybox@1.37.0-r31?arch=x86_64&distro=alpine-3.24.2",
+    "id": "CVE-2025-60876",
+    "severity": "Medium",
+    "fix": {
+      "versions": [],
+      "state": ""
+    },
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+    "status": "unresolved",
+    "action": "BusyBox wget request-target injection. Health checks use fixed loopback URLs; mitigation is not treated as remediation. Await verified vendor patch or reviewed reachability evidence."
+  },
+  {
+    "image": "image-app",
+    "digest": "sha256:f52c81d8ddaf1500c73ddd97d8cba83264cde98ba9dce2e47be9a0f4e1e88dbe",
+    "package": "busybox-binsh",
+    "version": "1.37.0-r31",
+    "purl": "pkg:apk/alpine/busybox-binsh@1.37.0-r31?arch=x86_64&distro=alpine-3.24.2&upstream=busybox",
+    "id": "CVE-2025-60876",
+    "severity": "Medium",
+    "fix": {
+      "versions": [],
+      "state": ""
+    },
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+    "status": "unresolved",
+    "action": "BusyBox wget request-target injection. Health checks use fixed loopback URLs; mitigation is not treated as remediation. Await verified vendor patch or reviewed reachability evidence."
+  },
+  {
+    "image": "image-app",
+    "digest": "sha256:f52c81d8ddaf1500c73ddd97d8cba83264cde98ba9dce2e47be9a0f4e1e88dbe",
+    "package": "ssl_client",
+    "version": "1.37.0-r31",
+    "purl": "pkg:apk/alpine/ssl_client@1.37.0-r31?arch=x86_64&distro=alpine-3.24.2&upstream=busybox",
+    "id": "CVE-2025-60876",
+    "severity": "Medium",
+    "fix": {
+      "versions": [],
+      "state": ""
+    },
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+    "status": "unresolved",
+    "action": "BusyBox wget request-target injection. Health checks use fixed loopback URLs; mitigation is not treated as remediation. Await verified vendor patch or reviewed reachability evidence."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "openssl",
+    "version": "1:3.5.8-1.0.1.el9_8",
+    "purl": "pkg:rpm/ol/openssl@3.5.8-1.0.1.el9_8?arch=x86_64&distro=ol-9.8&epoch=1&upstream=openssl-3.5.8-1.0.1.el9_8.src.rpm",
+    "id": "ELSA-2024-12675",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.0.7-28.0.1.el9_4_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.0.7-28.0.1.el9_4_fips",
+          "date": "2024-09-19",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2024-12675.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "openssl-libs",
+    "version": "1:3.5.8-1.0.1.el9_8",
+    "purl": "pkg:rpm/ol/openssl-libs@3.5.8-1.0.1.el9_8?arch=x86_64&distro=ol-9.8&epoch=1&upstream=openssl-3.5.8-1.0.1.el9_8.src.rpm",
+    "id": "ELSA-2024-12675",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.0.7-28.0.1.el9_4_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.0.7-28.0.1.el9_4_fips",
+          "date": "2024-09-19",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2024-12675.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "openssl",
+    "version": "1:3.5.8-1.0.1.el9_8",
+    "purl": "pkg:rpm/ol/openssl@3.5.8-1.0.1.el9_8?arch=x86_64&distro=ol-9.8&epoch=1&upstream=openssl-3.5.8-1.0.1.el9_8.src.rpm",
+    "id": "ELSA-2026-50075",
+    "severity": "High",
+    "fix": {
+      "versions": [
+        "10:3.5.1-7.0.1.el9_7_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.5.1-7.0.1.el9_7_fips",
+          "date": "2026-01-29",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2026-50075.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "openssl-libs",
+    "version": "1:3.5.8-1.0.1.el9_8",
+    "purl": "pkg:rpm/ol/openssl-libs@3.5.8-1.0.1.el9_8?arch=x86_64&distro=ol-9.8&epoch=1&upstream=openssl-3.5.8-1.0.1.el9_8.src.rpm",
+    "id": "ELSA-2026-50075",
+    "severity": "High",
+    "fix": {
+      "versions": [
+        "10:3.5.1-7.0.1.el9_7_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.5.1-7.0.1.el9_7_fips",
+          "date": "2026-01-29",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2026-50075.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "gnutls",
+    "version": "3.8.10-8.el9_8",
+    "purl": "pkg:rpm/ol/gnutls@3.8.10-8.el9_8?arch=x86_64&distro=ol-9.8&upstream=gnutls-3.8.10-8.el9_8.src.rpm",
+    "id": "ELSA-2024-12336",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.7.6-23.el9_3.4_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.7.6-23.el9_3.4_fips",
+          "date": "2024-04-19",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2024-12336.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "openssl",
+    "version": "1:3.5.8-1.0.1.el9_8",
+    "purl": "pkg:rpm/ol/openssl@3.5.8-1.0.1.el9_8?arch=x86_64&distro=ol-9.8&epoch=1&upstream=openssl-3.5.8-1.0.1.el9_8.src.rpm",
+    "id": "ELSA-2025-28011",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.5.1-4.0.2.el9_7_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.5.1-4.0.2.el9_7_fips",
+          "date": "2025-11-25",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2025-28011.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "openssl-libs",
+    "version": "1:3.5.8-1.0.1.el9_8",
+    "purl": "pkg:rpm/ol/openssl-libs@3.5.8-1.0.1.el9_8?arch=x86_64&distro=ol-9.8&epoch=1&upstream=openssl-3.5.8-1.0.1.el9_8.src.rpm",
+    "id": "ELSA-2025-28011",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.5.1-4.0.2.el9_7_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.5.1-4.0.2.el9_7_fips",
+          "date": "2025-11-25",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2025-28011.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "gnutls",
+    "version": "3.8.10-8.el9_8",
+    "purl": "pkg:rpm/ol/gnutls@3.8.10-8.el9_8?arch=x86_64&distro=ol-9.8&upstream=gnutls-3.8.10-8.el9_8.src.rpm",
+    "id": "ELSA-2025-20606",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.8.3-6.el9_6.2_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.8.3-6.el9_6.2_fips",
+          "date": "2025-09-19",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2025-20606.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "gnutls",
+    "version": "3.8.10-8.el9_8",
+    "purl": "pkg:rpm/ol/gnutls@3.8.10-8.el9_8?arch=x86_64&distro=ol-9.8&upstream=gnutls-3.8.10-8.el9_8.src.rpm",
+    "id": "ELSA-2026-50346",
+    "severity": "High",
+    "fix": {
+      "versions": [
+        "10:3.8.10-4.el9_8_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.8.10-4.el9_8_fips",
+          "date": "2026-06-24",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2026-50346.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "openssl",
+    "version": "1:3.5.8-1.0.1.el9_8",
+    "purl": "pkg:rpm/ol/openssl@3.5.8-1.0.1.el9_8?arch=x86_64&distro=ol-9.8&epoch=1&upstream=openssl-3.5.8-1.0.1.el9_8.src.rpm",
+    "id": "ELSA-2026-50379",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.5.5-4.0.1.el9_8_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.5.5-4.0.1.el9_8_fips",
+          "date": "2026-07-07",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2026-50379.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "openssl-libs",
+    "version": "1:3.5.8-1.0.1.el9_8",
+    "purl": "pkg:rpm/ol/openssl-libs@3.5.8-1.0.1.el9_8?arch=x86_64&distro=ol-9.8&epoch=1&upstream=openssl-3.5.8-1.0.1.el9_8.src.rpm",
+    "id": "ELSA-2026-50379",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.5.5-4.0.1.el9_8_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.5.5-4.0.1.el9_8_fips",
+          "date": "2026-07-07",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2026-50379.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "openssl",
+    "version": "1:3.5.8-1.0.1.el9_8",
+    "purl": "pkg:rpm/ol/openssl@3.5.8-1.0.1.el9_8?arch=x86_64&distro=ol-9.8&epoch=1&upstream=openssl-3.5.8-1.0.1.el9_8.src.rpm",
+    "id": "ELSA-2026-50345",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.5.5-3.0.1.el9_8_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.5.5-3.0.1.el9_8_fips",
+          "date": "2026-06-24",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2026-50345.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "openssl-libs",
+    "version": "1:3.5.8-1.0.1.el9_8",
+    "purl": "pkg:rpm/ol/openssl-libs@3.5.8-1.0.1.el9_8?arch=x86_64&distro=ol-9.8&epoch=1&upstream=openssl-3.5.8-1.0.1.el9_8.src.rpm",
+    "id": "ELSA-2026-50345",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.5.5-3.0.1.el9_8_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.5.5-3.0.1.el9_8_fips",
+          "date": "2026-06-24",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2026-50345.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "gnutls",
+    "version": "3.8.10-8.el9_8",
+    "purl": "pkg:rpm/ol/gnutls@3.8.10-8.el9_8?arch=x86_64&distro=ol-9.8&upstream=gnutls-3.8.10-8.el9_8.src.rpm",
+    "id": "ELSA-2024-12364",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.8.3-4.el9_4_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.8.3-4.el9_4_fips",
+          "date": "2024-05-08",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2024-12364.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "gnutls",
+    "version": "3.8.10-8.el9_8",
+    "purl": "pkg:rpm/ol/gnutls@3.8.10-8.el9_8?arch=x86_64&distro=ol-9.8&upstream=gnutls-3.8.10-8.el9_8.src.rpm",
+    "id": "ELSA-2026-50149",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:3.8.3-10.el9_7_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:3.8.3-10.el9_7_fips",
+          "date": "2026-03-12",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2026-50149.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-db",
+    "digest": "sha256:e7adccb96d42e94827d7a74e7f5785adf6a4bda686e9606935af7f5af1fa18b2",
+    "package": "libgcrypt",
+    "version": "1.10.0-13.el9_8",
+    "purl": "pkg:rpm/ol/libgcrypt@1.10.0-13.el9_8?arch=x86_64&distro=ol-9.8&upstream=libgcrypt-1.10.0-13.el9_8.src.rpm",
+    "id": "ELSA-2026-500145",
+    "severity": "Medium",
+    "fix": {
+      "versions": [
+        "10:1.10.0-13.el9_8_fips"
+      ],
+      "state": "fixed",
+      "available": [
+        {
+          "version": "10:1.10.0-13.el9_8_fips",
+          "date": "2026-08-07",
+          "kind": "advisory"
+        }
+      ]
+    },
+    "source": "https://linux.oracle.com/errata/ELSA-2026-500145.html",
+    "status": "unresolved",
+    "action": "FIPS epoch/channel mismatch requires vendor confirmation. Enabled-channel packages updated; no cross-channel downgrade or suppression applied."
+  },
+  {
+    "image": "image-web",
+    "digest": "sha256:6809047284838a1dd013ba4abfab57ac4b9b510710e0f3c5ab3deb1173d478e0",
+    "package": "zlib",
+    "version": "1.3.2-r0",
+    "purl": "pkg:apk/alpine/zlib@1.3.2-r0?arch=x86_64&distro=alpine-3.24.2",
+    "id": "CVE-2026-85091",
+    "severity": "High",
+    "fix": {
+      "versions": [],
+      "state": ""
+    },
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2026-85091",
+    "status": "unresolved",
+    "action": "Affected zlib remains present. No fixed version listed; upstream stable is 1.3.2. Keep blocked pending a verified distro fix or tested upstream patch."
+  },
+  {
+    "image": "image-web",
+    "digest": "sha256:6809047284838a1dd013ba4abfab57ac4b9b510710e0f3c5ab3deb1173d478e0",
+    "package": "busybox",
+    "version": "1.37.0-r31",
+    "purl": "pkg:apk/alpine/busybox@1.37.0-r31?arch=x86_64&distro=alpine-3.24.2",
+    "id": "CVE-2025-60876",
+    "severity": "Medium",
+    "fix": {
+      "versions": [],
+      "state": ""
+    },
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+    "status": "unresolved",
+    "action": "BusyBox wget request-target injection. Health checks use fixed loopback URLs; mitigation is not treated as remediation. Await verified vendor patch or reviewed reachability evidence."
+  },
+  {
+    "image": "image-web",
+    "digest": "sha256:6809047284838a1dd013ba4abfab57ac4b9b510710e0f3c5ab3deb1173d478e0",
+    "package": "busybox-binsh",
+    "version": "1.37.0-r31",
+    "purl": "pkg:apk/alpine/busybox-binsh@1.37.0-r31?arch=x86_64&distro=alpine-3.24.2&upstream=busybox",
+    "id": "CVE-2025-60876",
+    "severity": "Medium",
+    "fix": {
+      "versions": [],
+      "state": ""
+    },
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+    "status": "unresolved",
+    "action": "BusyBox wget request-target injection. Health checks use fixed loopback URLs; mitigation is not treated as remediation. Await verified vendor patch or reviewed reachability evidence."
+  },
+  {
+    "image": "image-web",
+    "digest": "sha256:6809047284838a1dd013ba4abfab57ac4b9b510710e0f3c5ab3deb1173d478e0",
+    "package": "ssl_client",
+    "version": "1.37.0-r31",
+    "purl": "pkg:apk/alpine/ssl_client@1.37.0-r31?arch=x86_64&distro=alpine-3.24.2&upstream=busybox",
+    "id": "CVE-2025-60876",
+    "severity": "Medium",
+    "fix": {
+      "versions": [],
+      "state": ""
+    },
+    "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+    "status": "unresolved",
+    "action": "BusyBox wget request-target injection. Health checks use fixed loopback URLs; mitigation is not treated as remediation. Await verified vendor patch or reviewed reachability evidence."
+  }
+]

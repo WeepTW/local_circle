@@ -1,3 +1,7 @@
+# Current review
+
+The latest personal-preference/account implementation and all-severity release decision are recorded in [Security disposition](SECURITY_DISPOSITION.md). **Release remains blocked by 24 unresolved image findings.** The older results below are historical, not the current acceptance verdict.
+
 # Stability and security review
 
 Review date: 2026-09-22. Scope: application code, dependency manifests, database access, local deployment and static public showcase.

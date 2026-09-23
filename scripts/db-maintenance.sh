@@ -32,6 +32,7 @@ case ${1:-} in
     tables=$(mysql -e 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()')
     [[ $tables == 0 ]] || { echo 'Restore requires an empty, isolated local_circle database.' >&2; exit 1; }
     mysql < "$2"
+    mysql < DB/005_grants.sql
     echo 'Database restored. Restore the matching account key separately before starting the app.'
     ;;
   *) echo 'Usage: bash scripts/db-maintenance.sh backup FILE | migrate | restore FILE' >&2; exit 2;;
