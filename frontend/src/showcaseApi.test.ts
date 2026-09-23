@@ -44,3 +44,39 @@ it("isolates ownership, preserves snapshots and enforces product ACL/version", a
   await api.remove(p.preferenceId, 1);
   expect(await api.preferences()).toEqual([]);
 });
+
+it("keeps private product fields and full account isolated", async () => {
+  vi.resetModules();
+  const { showcaseApi: api, setShowcaseIdentity: set } = await import(
+    "./showcaseApi"
+  );
+  set("1");
+  const catalog = await api.products();
+  const p = await api.save({
+    productName: "Private",
+    price: 12.5,
+    feeRate: 0.02,
+    plannedQuantity: 2,
+    accountNumber: "001234567890",
+  });
+  expect(p.productId).toBeNull();
+  expect(p.totalAmount).toBe(25.5);
+  expect(await api.accountNumber(p.accountId)).toEqual({
+    accountNumber: "001234567890",
+  });
+  expect(await api.products()).toEqual(catalog);
+  set("2");
+  await expect(api.accountNumber(p.accountId)).rejects.toThrow();
+  set("1");
+  const accounts = await api.accounts();
+  await expect(
+    api.save({
+      productName: "Invalid",
+      price: 1,
+      feeRate: 0.01,
+      plannedQuantity: 0,
+      accountNumber: "001234567891",
+    }),
+  ).rejects.toThrow();
+  expect(await api.accounts()).toEqual(accounts);
+});

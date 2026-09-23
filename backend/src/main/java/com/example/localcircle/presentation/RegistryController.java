@@ -1,6 +1,8 @@
 package com.example.localcircle.presentation;
 
 import com.example.localcircle.business.model.Domain.*;
+import com.example.localcircle.business.model.PersonalPreference;
+import com.example.localcircle.business.service.PersonalPreferenceService;
 import com.example.localcircle.business.service.RegistryService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -15,8 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class RegistryController {
   private final RegistryService service;
 
-  public RegistryController(RegistryService service) {
+  private final PersonalPreferenceService personal;
+
+  public RegistryController(RegistryService service, PersonalPreferenceService personal) {
     this.service = service;
+    this.personal = personal;
   }
 
   @GetMapping("/me")
@@ -39,30 +44,46 @@ public class RegistryController {
     return service.accounts(actor);
   }
 
+  public record AccountNumberResponse(String accountNumber) {
+    @Override
+    public String toString() {
+      return "AccountNumberResponse[redacted]";
+    }
+  }
+
+  @GetMapping("/accounts/{id}/number")
+  public ResponseEntity<AccountNumberResponse> accountNumber(
+      @RequestAttribute Actor actor, @PathVariable @Positive long id) {
+    return ResponseEntity.ok()
+        .header("Cache-Control", "no-store")
+        .header("Pragma", "no-cache")
+        .body(new AccountNumberResponse(personal.accountNumber(actor, id)));
+  }
+
   @GetMapping("/preferences")
-  public List<Preference> list(@RequestAttribute Actor actor) {
-    return service.preferences(actor);
+  public List<PersonalPreference.View> list(@RequestAttribute Actor actor) {
+    return personal.list(actor);
   }
 
   @GetMapping("/preferences/{id}")
-  public Preference get(@RequestAttribute Actor actor, @PathVariable @Positive long id) {
-    return service.preference(actor, id);
+  public PersonalPreference.View get(
+      @RequestAttribute Actor actor, @PathVariable @Positive long id) {
+    return personal.get(actor, id);
   }
 
   @PostMapping("/preferences")
-  public ResponseEntity<Preference> save(
-      @RequestAttribute Actor actor, @Valid @RequestBody Requests.Save r) {
-    var p = service.save(actor, new SaveCommand(r.productId(), r.accountId(), r.plannedQuantity()));
+  public ResponseEntity<PersonalPreference.View> save(
+      @RequestAttribute Actor actor, @Valid @RequestBody PersonalPreference.Input r) {
+    var p = personal.save(actor, r);
     return ResponseEntity.created(URI.create("/api/v1/preferences/" + p.preferenceId())).body(p);
   }
 
   @PutMapping("/preferences/{id}")
-  public Preference update(
+  public PersonalPreference.View update(
       @RequestAttribute Actor actor,
       @PathVariable @Positive long id,
-      @Valid @RequestBody Requests.Update r) {
-    return service.update(
-        actor, id, r.version(), new SaveCommand(r.productId(), r.accountId(), r.plannedQuantity()));
+      @Valid @RequestBody PersonalPreference.Input r) {
+    return personal.update(actor, id, r);
   }
 
   @DeleteMapping("/preferences/{id}")
@@ -70,7 +91,7 @@ public class RegistryController {
       @RequestAttribute Actor actor,
       @PathVariable @Positive long id,
       @RequestParam @PositiveOrZero long version) {
-    service.delete(actor, id, version);
+    personal.delete(actor, id, version);
     return ResponseEntity.noContent().build();
   }
 

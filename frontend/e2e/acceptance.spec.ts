@@ -52,3 +52,8 @@ test("each catalog item saves through the full-stack preference dialog", async (
   await login(page);
   await verifyCatalogPreferences(page);
 });
+
+import { verifyPersonalPreference } from "../test-support/personal-preference";
+test("personal product, encrypted account and stored XSS", async ({page}) => {
+  await page.goto("/preferences"); await login(page); await verifyPersonalPreference(page);
+});

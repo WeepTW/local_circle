@@ -25,6 +25,9 @@ with socket.socket() as db, socket.socket() as web:
         f.write(f'MYSQL_ROOT_PASSWORD={secrets.token_hex(24)}\nMYSQL_PASSWORD={secrets.token_hex(24)}\nDB_PORT={db.getsockname()[1]}\nWEB_PORT={web.getsockname()[1]}\n')
 PY
   )
+  python3 scripts/init-account-key.py --new "$run_dir/keys"
+  printf "ACCOUNT_KEY_FILE=%s\n" "$run_dir/keys/account.key" >> "$envfile"
+  export ACCOUNT_KEY_FILE="$run_dir/keys/account.key"
   chmod 600 "$envfile"
   [[ $(stat -c '%a' "$envfile") == 600 ]] || { echo 'Unsafe credential permissions' >&2; exit 1; }
   compose=(docker compose --env-file "$envfile" -p "$project")
@@ -36,7 +39,7 @@ cleanup_stack() {
   local result=$?
   trap - EXIT
   if [[ $result != 0 ]]; then
-    "${compose[@]}" logs --no-color app web 2>&1 | python3 -c '
+    "${compose[@]}" logs --no-color db app web 2>&1 | python3 -c '
 import pathlib,sys
 secrets=[s.partition("=")[2] for s in pathlib.Path(sys.argv[1]).read_text().splitlines() if "PASSWORD=" in s]
 text=sys.stdin.read()
@@ -48,6 +51,8 @@ pathlib.Path(sys.argv[2]).write_text(text)
     docker rm -f "${project}_scan" >/dev/null 2>&1 || true
     "${compose[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || result=1
     rm -f -- "$envfile"
+    rm -f -- "$run_dir/keys/account.key"
+    rmdir -- "$run_dir/keys"
     rmdir -- "$run_dir" || result=1
   else result=1; fi
   exit "$result"

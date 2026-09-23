@@ -24,11 +24,12 @@ export interface Account {
 }
 export interface Preference {
   preferenceId: number;
-  productId: number;
+  productId: number | null;
   productCode: string;
   productName: string;
   accountId: number;
   maskedAccount: string;
+  accountNumberAvailable?: boolean;
   userEmail: string;
   plannedQuantity: number;
   priceSnapshot: number;
@@ -41,8 +42,12 @@ export interface Preference {
   updatedAt: string;
 }
 export interface Save {
-  productId: number;
-  accountId: number;
+  productId?: number | null;
+  productName?: string;
+  price?: number;
+  feeRate?: number;
+  accountId?: number;
+  accountNumber?: string;
   plannedQuantity: number;
 }
 export interface ProductUpdate {

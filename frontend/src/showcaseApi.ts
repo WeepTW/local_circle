@@ -77,6 +77,10 @@ const accountOwners = [
   { id: 30, owner: 3, last4: "3333" },
   { id: 40, owner: 4, last4: "4444" },
 ];
+const accountNumbers = new Map(
+  accountOwners.map((a) => [a.id, "000000" + a.last4]),
+);
+let accountSequence = 100;
 const rows = new Map<number, { owner: number; value: Preference }>();
 const fail = (status: number, detail: string): never => {
   throw new ApiError({ status, code: "SHOWCASE_ERROR", detail, traceId: "" });
@@ -95,39 +99,90 @@ function owned(id: number) {
 function snapshot(
   c: Save,
 ): Omit<Preference, "preferenceId" | "version" | "savedAt" | "updatedAt"> {
-  const p =
-    products.find((p) => p.productId === c.productId && p.active) ??
-    fail(404, "商品不存在或已停用。");
-  const account =
-    accountOwners.find((a) => a.id === c.accountId && a.owner === identity) ??
-    fail(404, "找不到此帳戶。");
+  actor();
+  const source =
+    c.productId == null
+      ? undefined
+      : products.find((p) => p.productId === c.productId && p.active);
+  if (c.productId != null && !source) fail(404, "商品不存在或已停用。");
+  const custom =
+    c.productName !== undefined ||
+    c.price !== undefined ||
+    c.feeRate !== undefined;
+  const p = custom
+    ? {
+        productId: c.productId ?? null,
+        productCode: source?.productCode ?? "",
+        productName: c.productName!,
+        price: c.price!,
+        feeRate: c.feeRate!,
+      }
+    : source;
+  if (
+    !p ||
+    !p.productName?.trim() ||
+    p.productName.length > 160 ||
+    !Number.isFinite(p.price) ||
+    p.price < 0 ||
+    p.price > 999999999999 ||
+    !Number.isFinite(p.feeRate) ||
+    p.feeRate < 0 ||
+    p.feeRate > 1
+  )
+    fail(400, "商品資料無效。");
+  if ((c.accountId == null) === (c.accountNumber == null))
+    fail(400, "請擇一輸入帳戶。");
+  let account = accountOwners.find(
+    (a) => a.id === c.accountId && a.owner === identity,
+  );
+  if (c.accountNumber != null) {
+    if (!/^[0-9]{6,32}$/.test(c.accountNumber)) fail(400, "帳號格式無效。");
+    account = {
+      id: accountSequence,
+      owner: identity,
+      last4: c.accountNumber.slice(-4),
+    };
+  }
+  if (!account) fail(404, "找不到此帳戶。");
   if (
     !Number.isInteger(c.plannedQuantity) ||
     c.plannedQuantity < 1 ||
     c.plannedQuantity > 1000000
   )
     fail(400, "請輸入有效整數數量。");
-  const base = p.price * c.plannedQuantity,
-    fee = base * p.feeRate,
+  const selected = p!;
+  const base = selected.price * c.plannedQuantity,
+    fee = base * selected.feeRate,
     total = base + fee;
   if (!Number.isFinite(total) || total >= 1e16)
     fail(400, "預計金額超出支援範圍。");
+  if (c.accountNumber != null) {
+    accountOwners.push(account!);
+    accountNumbers.set(account!.id, c.accountNumber);
+    accountSequence++;
+  }
   return {
-    productId: p.productId,
-    productCode: p.productCode,
-    productName: p.productName,
-    accountId: account.id,
-    maskedAccount: "******" + account.last4,
+    productId: selected.productId,
+    productCode: selected.productCode,
+    productName: selected.productName,
+    accountId: account!.id,
+    maskedAccount: "******" + account!.last4,
     userEmail: actor().email,
     plannedQuantity: c.plannedQuantity,
-    priceSnapshot: p.price,
-    feeRateSnapshot: p.feeRate,
+    priceSnapshot: selected.price,
+    feeRateSnapshot: selected.feeRate,
     baseAmount: base,
     totalFee: fee,
     totalAmount: total,
   };
 }
 export const showcaseApi: typeof httpApi = {
+  async accountNumber(id) {
+    actor();
+    if (!accountOwners.some((a) => a.id === id && a.owner === identity))
+      fail(404, "找不到此帳戶。");
+    return { accountNumber: accountNumbers.get(id)! };
+  },
   async me() {
     return copy(actor());
   },
@@ -155,11 +210,7 @@ export const showcaseApi: typeof httpApi = {
     return copy(
       [...rows.values()]
         .filter((r) => r.owner === identity)
-        .map((r) => ({
-          ...r.value,
-          productName: products.find((p) => p.productId === r.value.productId)!
-            .productName,
-        }))
+        .map((r) => r.value)
         .sort(
           (a, b) =>
             b.updatedAt.localeCompare(a.updatedAt) ||

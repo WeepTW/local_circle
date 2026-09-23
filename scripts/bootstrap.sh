@@ -9,12 +9,14 @@ if [ ! -f .env ]; then
  for port in "$db_port" "$web_port"; do
   [[ $port =~ ^[1-9][0-9]{0,4}$ ]] && ((port <= 65535)) || { echo 'Invalid port' >&2; exit 1; }
  done
+ [[ -f .secrets/account.key ]] || python3 scripts/init-account-key.py --new .secrets
  (
   umask 077
   printf 'COMPOSE_PROJECT_NAME=%s\nMYSQL_ROOT_PASSWORD=%s\nMYSQL_PASSWORD=%s\nDB_PORT=%s\nWEB_PORT=%s\n' \
     "$project" "$(openssl rand -hex 24)" "$(openssl rand -hex 24)" "$db_port" "$web_port" > .env
  )
 fi
+[[ -f .secrets/account.key ]] || { echo "Account key missing: restore it, or follow the documented legacy migration before starting." >&2; exit 1; }
 python3 scripts/check-compose-project.py
 docker compose up -d --wait db
 docker compose exec -T db sh -c 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql --default-character-set=utf8mb4 -h127.0.0.1 -uroot local_circle -e "SELECT VERSION(); CALL sp_product_list_active(); SHOW GRANTS FOR local_circle;"'

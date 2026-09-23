@@ -16,6 +16,7 @@ services:
       - ./DB/002_stored_procedures.sql:/docker-entrypoint-initdb.d/002_stored_procedures.sql:ro
       - ./DB/003_seed_demo.sql:/docker-entrypoint-initdb.d/003_seed_demo.sql:ro
       - ./DB/005_grants.sql:/docker-entrypoint-initdb.d/005_grants.sql:ro
+      - ./DB/006_personal_preferences.sql:/docker-entrypoint-initdb.d/006_personal_preferences.sql:ro
     healthcheck:
       test: ['CMD-SHELL', 'MYSQL_PWD=$$MYSQL_ROOT_PASSWORD mysql -h127.0.0.1 -uroot -e "CALL local_circle.sp_product_list_active()" >/dev/null 2>&1']
       interval: 5s
@@ -27,6 +28,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: local
       SERVER_ADDRESS: 0.0.0.0
+      ACCOUNT_KEY_FILE: /run/secrets/account.key
       APP_PORT: 8089
       ALLOWED_ORIGINS: http://localhost:5173,http://127.0.0.1:5173,http://localhost:${WEB_PORT:-8088},http://127.0.0.1:${WEB_PORT:-8088}
       DB_URL: jdbc:mysql://db:3306/local_circle?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true
@@ -36,10 +38,12 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ['CMD-SHELL', 'curl -fsS -H "X-Demo-User-Id: 1" http://127.0.0.1:8089/api/v1/products >/dev/null']
+      test: ['CMD-SHELL', 'wget -q -O /dev/null --header="X-Demo-User-Id: 1" http://127.0.0.1:8089/api/v1/products >/dev/null']
       interval: 5s
       timeout: 5s
       retries: 30
+    volumes:
+      - ${ACCOUNT_KEY_FILE:-./.secrets/account.key}:/run/secrets/account.key:ro
     read_only: true
     tmpfs: [/tmp]
     security_opt: ['no-new-privileges:true']

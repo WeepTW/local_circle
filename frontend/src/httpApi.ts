@@ -49,6 +49,8 @@ export async function request<T>(
   return response.json();
 }
 export const httpApi = {
+  accountNumber: (id: number) =>
+    request<{ accountNumber: string }>("/accounts/" + id + "/number"),
   me: () => request<Actor>("/me"),
   products: () => request<Product[]>("/products"),
   adminProducts: () => request<Product[]>("/admin/products"),

@@ -2,6 +2,7 @@
 import { useRegistry } from "./composables/useRegistry";
 import { money } from "./api";
 import { productName } from "./format";
+import AccountNumber from "./components/AccountNumber.vue";
 import PreferenceForm from "./components/PreferenceForm.vue";
 import ProductForm from "./components/ProductForm.vue";
 const emit = defineEmits<{ logout: [] }>();
@@ -66,7 +67,13 @@ const {
         </div>
         <div class="session-controls">
           <span>{{ actor?.userName }}</span>
-          <button class="ghost" :disabled="busy || loading" @click="emit('logout')">登出</button>
+          <button
+            class="ghost"
+            :disabled="busy || loading"
+            @click="emit('logout')"
+          >
+            登出
+          </button>
         </div>
       </header>
       <div v-if="error" role="alert" class="error">
@@ -137,8 +144,14 @@ const {
                     </td>
                     <td>{{ p.plannedQuantity }}</td>
                     <td>
-                      {{ p.maskedAccount
-                      }}<small class="block muted">{{ p.userEmail }}</small>
+                      <AccountNumber
+                        :account-id="p.accountId"
+                        :masked="p.maskedAccount"
+                      />
+                      <small v-if="p.accountNumberAvailable === false"
+                        >完整帳號待補齊</small
+                      >
+                      <small class="block muted">{{ p.userEmail }}</small>
                     </td>
                     <td class="money">
                       {{ money(p.priceSnapshot)
@@ -223,9 +236,14 @@ const {
         </section>
         <section v-else-if="section === 'accounts'" class="card panel">
           <h2>我的有效帳戶</h2>
-          <p class="muted">帳戶已預先登錄，系統只保存參照，不接收完整帳號。</p>
+          <p class="muted">
+            完整帳號加密保存，清單預設遮罩。請僅輸入示範假資料。
+          </p>
           <div v-for="a in accounts" :key="a.accountId" class="account-row">
-            <strong>{{ a.maskedAccount }}</strong
+            <strong
+              ><AccountNumber
+                :account-id="a.accountId"
+                :masked="a.maskedAccount" /></strong
             ><span class="badge">{{ a.currency }}</span>
           </div>
           <p v-if="!accounts.length" class="empty">沒有有效帳戶。</p>

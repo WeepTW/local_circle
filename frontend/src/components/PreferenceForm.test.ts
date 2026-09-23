@@ -25,20 +25,27 @@ describe("preference form", () => {
     expect(w.find("script").exists()).toBe(false);
     expect(w.text()).toContain("<script>alert(1)</script>");
     expect(w.text()).toContain("******9666");
-    await w.find("input").setValue(5);
+    await w.get('input[type="number"][step="1"]').setValue(5);
     await w.find("form").trigger("submit");
     expect(w.emitted("save")?.[0]).toEqual([
-      { productId: 1, accountId: 10, plannedQuantity: 5 },
+      {
+        productId: 1,
+        productName: products[0].productName,
+        price: 60,
+        feeRate: 0.001,
+        accountId: 10,
+        plannedQuantity: 5,
+      },
     ]);
   });
   it("blocks invalid quantity, absent account and duplicate busy submit", async () => {
     const w = mount(PreferenceForm, {
       props: { products, accounts, busy: false },
     });
-    await w.find("input").setValue(0);
+    await w.get('input[type="number"][step="1"]').setValue(0);
     await w.find("form").trigger("submit");
     expect(w.emitted("save")).toBeUndefined();
-    await w.find("input").setValue(5);
+    await w.get('input[type="number"][step="1"]').setValue(5);
     await w.setProps({ busy: true });
     await w.find("form").trigger("submit");
     expect(w.emitted("save")).toBeUndefined();

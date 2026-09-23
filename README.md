@@ -4,7 +4,7 @@ A financial product preference registry built with Vue 3, Spring Boot and MySQL.
 
 [Interactive website](https://weeptw.github.io/local_circle/) · [Architecture](docs/ARCHITECTURE.md) · [Security review](docs/SECURITY_REVIEW.md)
 
-Save and organize product preferences, select owned account references and inspect estimated amounts. Shared product updates require ADMIN **and** matching owner label. Versions protect concurrent writes; multi-table changes are transactional.
+Save personal product names, prices and fee rates, select an owned account or enter a complete synthetic account number, and inspect estimated amounts. Shared product updates require ADMIN **and** matching owner label. Versions protect concurrent writes; multi-table changes are transactional.
 
 The website uses synthetic reference data stored only in the current browser tab. Refresh resets the showcase. Product prices are reference values maintained through product management. It does not connect to a bank, execute orders or move money. The Java/MySQL implementation is included for local execution; GitHub Pages serves only the static showcase.
 
@@ -20,7 +20,7 @@ Run `35670087560` built artifacts with restrictive permissions because secret-fi
 
 1. Add preference export/import and a readable change history.
 2. Add catalog search and sorting.
-3. Add database backup/restore exercises and error-rate/latency monitoring.
+3. Add error-rate/latency monitoring.
 
 ## Run the complete application
 
@@ -89,6 +89,7 @@ The full gate runs independent suites. Database-backed suites create a unique Co
 | `bash scripts/test-static.sh` | Shell syntax, architecture, known-secret checks |
 | `bash scripts/test-frontend.sh` | Node 24 unit tests, demo/production builds, demo credential exclusion and dependency audit |
 | `bash scripts/test-backend.sh` | Fresh schema, all Java tests, zero skipped integration tests |
+| `bash scripts/test-migration.sh` | Legacy upgrade, repeat execution, financial preservation and dump/restore |
 | `bash scripts/test-security.sh` | API abuse, stored XSS, secrets, dependencies, runtime hardening and image vulnerabilities |
 | `bash scripts/test-e2e.sh` | Complete application and real browser flows |
 | `bash scripts/test-pages.sh` | Pages build, subpath routing, isolated CRUD and reference catalog behavior |
@@ -111,7 +112,7 @@ npx playwright test --config=pages.config.ts
 - `ProcedureExecutor` centralizes JDBC resources, binding and query deadlines.
 - `useRegistry` separates Vue state/write lifecycle from markup.
 - HTTP and browser showcase adapters share a typed API facade.
-- Saved amount snapshots retain Java double arithmetic and DECIMAL persistence.
+- Personal preferences use BigDecimal arithmetic and DECIMAL persistence; fees round HALF_UP to 8 decimal places. The legacy calculator is retained for compatibility.
 - Typed errors do not expose full accounts, SQL internals or credentials.
 
 ## API
@@ -124,11 +125,12 @@ Base `/api/v1`; local-only `X-Demo-User-Id` header with predefined IDs 1–4.
 | GET | /products | active catalog |
 | GET | /admin/products | administrator catalog |
 | GET | /accounts | owned active masked accounts |
+| GET | /accounts/{id}/number | reveal owned account; no-store response |
 | GET / POST | /preferences | list / save |
 | GET / PUT / DELETE | /preferences/{id} | owned detail / update / delete |
 | PATCH | /admin/products/{id} | authorized product update |
 
-POST accepts productId, accountId, plannedQuantity; PUT adds version. DELETE requires `?version=N`. Unknown fields and fractional IDs/quantities are rejected. Stale writes return 409.
+POST accepts optional productId, productName/price/feeRate (all three together), plannedQuantity, and exactly one of accountId or accountNumber. Without custom fields, productId supplies the catalog defaults for backward compatibility. PUT adds version. Personal fields never update the shared catalog. DELETE requires `?version=N`. Unknown fields and fractional IDs/quantities are rejected. Stale writes return 409.
 
 ## Automation
 
@@ -144,6 +146,29 @@ Local deploy/test scripts and Pages builds explicitly set `VITE_DEMO_LOGIN=true`
 
 For a production integration, leave `VITE_DEMO_LOGIN` unset or false and replace `frontend/src/auth/productionProvider.ts` with server-verified login. The default provider refuses every login. The complete `auth/demo/` folder can then be deleted without changing the login screen; remove the demo-only browser fixtures and explicit demo flags from your deployment/tests too. Replace the local HTTP identity header with real server session handling when implementing that provider. Disabling dropdown hints alone does not secure the backend. `RegistryRepository` remains unchanged.
 
-## Functional boundaries
 
-Preference creation selects an existing active product, an owned account reference and quantity. Product names, reference prices and fee rates are maintained by authorized product administrators. There is no arbitrary product-creation form or user-specific override of those fields. Accounts are pre-registered references and are displayed masked; the application does not collect a full account number. These boundaries should be considered when assessing a requirement for direct entry of product fields or complete account numbers.
+## Personal products and encrypted accounts
+
+Choose a catalog item to prefill the preference dialog, or select the custom-product option. Edit the name (1–160 characters), price (0–999999999999; up to 8 decimal places), fee rate (0–1; up to 12 decimal places) and quantity (1–1000000). Only your saved preference changes. Catalog updates do not rewrite its name or financial snapshots. Total is principal plus the fee; total values must remain below 10^16.
+
+Account numbers accept 6–32 digits and preserve leading zeros. Use only synthetic values: the removable demonstration login is not a production identity system. The full local stack encrypts account numbers using AES-256-GCM with a random nonce and owner/account-bound authenticated data. The UI masks numbers until an explicit reveal and hides them again after 30 seconds. Pages keeps synthetic numbers only in memory; it does not provide server-side encryption or persist numbers in browser storage.
+
+Bootstrap creates `.secrets/account.key` only for a new installation. The containing directory is mode 0700; the file is read-only and is the only file mounted into the non-root app. Keep the directory on Linux storage. Back up the key separately from SQL backups, preserve its directory permissions, and never commit or print it. Restarting never generates a replacement. Missing, malformed or mismatched keys cause explicit failures. The stored key identifier permits verification; key rotation is not automated. To recover, restore the matching original key, not a newly generated one.
+
+Fresh local installs initialize predefined accounts with synthetic full numbers. Existing records with only last four digits stay masked and are marked incomplete; enter a complete synthetic number when editing a preference. Historical names unavailable in old data are populated from the current catalog during migration; no earlier name is fabricated.
+
+## Upgrade and recovery
+
+For an existing checkout and database, stop only its application services, then migrate before deploying the new application:
+
+```bash
+docker compose stop app web
+bash scripts/db-maintenance.sh migrate
+bash scripts/deploy.sh
+```
+
+Migration saves a restricted SQL backup under ignored `backups/`, applies the versioned, retryable schema upgrade, and records version 6. MySQL DDL commits independently; on failure, keep app/web stopped and retry only after resolving the error, or restore the backup into an isolated empty database. No volume is deleted. A key is created for legacy data only if no encrypted account/key-check data exists. Otherwise restore the original key.
+
+For backups: `bash scripts/db-maintenance.sh backup backups/manual.sql` (create the destination directory first). For recovery, create a separate Compose project with an **empty** `local_circle` database and app/web stopped, then run `bash scripts/db-maintenance.sh restore /path/to/backup.sql`. This refuses a populated target. Restore the matching key separately to that checkout's private `.secrets/` directory before starting the app. Do not enable shell tracing while managing secrets.
+
+All image severities are release-blocking until fixed or individually proven not affected with time-limited evidence. `scripts/assess-vulnerabilities.py` retains raw matches and produces a per-package disposition. Unresolved findings mean branch-only delivery: no main merge or Pages deployment, even if frontend CI passes.

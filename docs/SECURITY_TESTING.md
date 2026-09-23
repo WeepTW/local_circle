@@ -25,7 +25,7 @@ The functional baseline includes SQL injection and XSS prevention. The independe
 
 - All security assertions must pass. Java reports must exist, include integration tests and contain no skips.
 - Gitleaks findings block. npm vulnerabilities at moderate or above block. Every OSV finding blocks.
-- Container Critical findings block. All lower-severity findings remain in the local JSON reports and require review; a passing job does not mean images have zero vulnerabilities.
+- Every container finding is retained. All severities, including Negligible and Unknown, block release while unresolved. Only exact image/package/advisory not-affected decisions with evidence, sources and an unexpired review date may pass. No blanket suppressions or only-fixed filters are used.
 - Scanner errors, unavailable advisory databases and timeouts fail closed. Scanner images and Actions use immutable digests/commits. No blanket ignore file or automatic suppression is used.
 - Local reports are written to `tmp/test-results`; GitHub frontend reports are retained for seven days. Raw credentials and environment files are never included. Container failure diagnostics are redacted before storage.
 
@@ -36,3 +36,5 @@ This is automated verification, not a penetration-test certification. The public
 ## Execution scope
 
 GitHub runs only frontend unit/build/audit and static Pages browser tests. All backend, database, API security, full-stack browser and image checks remain in the local `scripts/test-all.sh` pipeline. Bank market-data integration is outside the requested scope. The modular demo login is tested, while a real server-side login provider is not implemented.
+
+Account tests cover AES-GCM randomness, ownership-bound authenticated data, leading zeros, wrong/missing keys, tampering, masked responses, explicit no-store reveal, and transaction rollback across account/preference/audit writes. Migration tests retain values and timestamps and restore encrypted payloads plus procedures.

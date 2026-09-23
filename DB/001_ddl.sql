@@ -48,3 +48,6 @@ CREATE TABLE preference_audit (
  FOREIGN KEY(user_id) REFERENCES app_user(user_id),
  CHECK(action IN ('SAVE','UPDATE','DELETE'))
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS account_key_state (singleton INT PRIMARY KEY, key_id VARCHAR(64) NULL, key_check VARCHAR(256) NULL, seed_accounts BOOLEAN NOT NULL DEFAULT FALSE);
+INSERT INTO account_key_state(singleton,seed_accounts) VALUES(1,TRUE);

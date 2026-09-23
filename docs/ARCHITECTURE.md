@@ -12,7 +12,7 @@ The full stack uses Nginx -> Spring Boot -> MySQL. Controllers validate requests
 - Preferences and active account references belong to the selected actor; IDs never imply authorization.
 - Save/update/delete and audit writes share a transaction. Versions reject stale writes.
 - Saved amounts are snapshots; explicit preference updates refresh them.
-- Java double arithmetic is retained. JDBC DECIMAL conversion is a persistence concern, not a new rounding policy.
+- Personal preference calculations use BigDecimal, with HALF_UP fee rounding to 8 places matching stored DECIMAL values. The legacy calculator and RegistryRepository signatures remain for compatibility.
 - Typed repository methods and API request/response shapes remain stable.
 
 ## GitHub Pages
@@ -26,3 +26,9 @@ It demonstrates behavior, not a publicly deployed Java service. The Java applica
 Writes reject duplicate in-flight submission in the UI. Stale responses cannot replace a newer identity's state. HTTP requests have a 15-second timeout; JDBC calls have a 10-second query timeout, pool acquisition 10 seconds and transaction timeout 15 seconds. Nginx has bounded upstream connection/read/send timeouts. These limits prevent indefinite waiting; they are not performance guarantees.
 
 `AuthGate` mounts the registry only after explicit login and clears it on logout. Role switching uses logout/login. Demo account validation is browser-only presentation behavior, not a backend security boundary.
+
+## Personal preferences and account encryption
+
+The API routes preference operations through PersonalPreferenceService and its independent repository port. Catalog linkage is optional; personal name/price/rate snapshots are authoritative. Catalog administration remains separate. New account creation, preference writes and audit writes share one transaction. All database access uses fixed parameterized procedures.
+
+AccountCipher reads an external key file and uses AES-256-GCM with random 96-bit nonces, 128-bit tags and owner/reference-bound authenticated data. The database stores ciphertext, a key ID and last four digits, never the encryption key. A startup key-check record detects a mismatched key. Full account responses are owner-scoped and no-store. Demo identity switching is not production authentication.

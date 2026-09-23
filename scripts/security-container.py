@@ -14,6 +14,9 @@ for c in containers:
         assert any(s.startswith('no-new-privileges') for s in c['HostConfig']['SecurityOpt'])
         assert 'ALL' in c['HostConfig']['CapDrop']
         assert not any(c['HostConfig']['PortBindings'].values())
+        key_mounts = [m for m in c['Mounts'] if m['Destination'] == '/run/secrets/account.key']
+        assert len(key_mounts) == 1 and not key_mounts[0]['RW']
+        subprocess.run(['docker', 'exec', c['Id'], 'test', '-r', '/run/secrets/account.key'], check=True)
         subprocess.run(['docker', 'exec', c['Id'], 'test', '-r', '/app/app.jar'], check=True)
     for bindings in (c['HostConfig']['PortBindings'] or {}).values():
         for binding in bindings or []:

@@ -101,3 +101,8 @@ test("each catalog item opens a preselected preference dialog", async ({ page })
   await login(page);
   await verifyCatalogPreferences(page);
 });
+
+import { verifyPersonalPreference } from "../test-support/personal-preference";
+test("personal product and full account stay in memory", async ({page}) => {
+  await page.goto("./#/preferences"); await login(page); await verifyPersonalPreference(page);
+});

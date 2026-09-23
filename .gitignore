@@ -14,3 +14,6 @@ tmp/
 *.pfx
 *.p12
 *.pem
+
+.secrets/
+backups/
