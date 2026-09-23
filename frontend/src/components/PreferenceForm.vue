@@ -7,11 +7,12 @@ const props = defineProps<{
   products: Product[];
   accounts: Account[];
   editing?: Preference;
+  initialProductId?: number;
   busy: boolean;
 }>();
 const emit = defineEmits<{ save: [data: Save]; cancel: [] }>();
 const productId = ref(
-  props.editing?.productId ?? props.products[0]?.productId ?? 0,
+  props.editing?.productId ?? props.initialProductId ?? props.products[0]?.productId ?? 0,
 );
 const accountId = ref(
   props.editing?.accountId ?? props.accounts[0]?.accountId ?? 0,

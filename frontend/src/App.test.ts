@@ -20,12 +20,12 @@ vi.mock("./api", async (importOriginal) => {
     },
   };
 });
-async function app() {
+async function app(path = "/preferences") {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [{ path: "/:pathMatch(.*)*", component: { render: () => null } }],
   });
-  await router.push("/preferences");
+  await router.push(path);
   await router.isReady();
   const w = mount(App, { global: { plugins: [router] } });
   await flushPromises();
@@ -94,4 +94,27 @@ describe("application states", () => {
     await click("確認刪除");
     expect(api.remove).toHaveBeenCalledWith(9, 2);
   });
+});
+
+it("opens the catalog item's preference form and cancels without saving", async () => {
+  vi.mocked(api.products).mockResolvedValue([
+    { productId: 1, productCode: "0050", productName: "台灣50", price: 60, feeRate: .001, currency: "TWD", ownerLabel: "TW_ETF_OWNER", active: true, version: 0 },
+    { productId: 2, productCode: "0052", productName: "科技", price: 180, feeRate: .001, currency: "TWD", ownerLabel: "TW_ETF_OWNER", active: true, version: 0 },
+  ]);
+  vi.mocked(api.accounts).mockResolvedValue([{ accountId: 10, maskedAccount: "******9666", currency: "TWD", version: 0 }]);
+  const w = await app("/products");
+  const buttons = w.findAll(".product-card button");
+  expect(buttons).toHaveLength(2);
+  await buttons[1].trigger("click");
+  const dialog = w.get('[role=dialog]');
+  expect((dialog.get("select").element as HTMLSelectElement).value).toBe("2");
+  expect(dialog.text()).toContain("180.18");
+  await dialog.findAll("button").find(b => b.text() === "取消")!.trigger("click");
+  expect(w.find('[role=dialog]').exists()).toBe(false);
+  expect(api.save).not.toHaveBeenCalled();
+  await buttons[0].trigger("click");
+  expect((w.get('[role=dialog] select').element as HTMLSelectElement).value).toBe("1");
+  await w.get('[role=dialog] form').trigger("submit");
+  await flushPromises();
+  expect(api.save).toHaveBeenCalledWith({ productId: 1, accountId: 10, plannedQuantity: 1 });
 });

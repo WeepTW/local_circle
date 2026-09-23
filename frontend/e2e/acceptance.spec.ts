@@ -1,3 +1,4 @@
+import { verifyCatalogPreferences } from "../test-support/catalog-preference";
 import { login } from "../test-support/login";
 import {test,expect} from '@playwright/test'
 test('save, edit, cancel/confirm delete, identity and mobile navigation',async({page,request})=>{
@@ -45,3 +46,9 @@ test('network error is visible and retry recovers',async({page})=>{
  await page.goto('/preferences');await login(page);await expect(page.getByRole('alert')).toContainText('無法連線')
  await page.unroute('**/api/v1/preferences');await page.getByRole('button',{name:'重新整理'}).click();await expect(page.getByRole('heading',{name:'保存的規劃',exact:true})).toBeVisible();await expect(page.getByRole('alert')).toHaveCount(0)
 })
+
+test("each catalog item saves through the full-stack preference dialog", async ({ page }) => {
+  await page.goto("/products");
+  await login(page);
+  await verifyCatalogPreferences(page);
+});

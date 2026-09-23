@@ -17,6 +17,8 @@ const {
   error,
   notice,
   showForm,
+  initialProductId,
+  openPreference,
   editing,
   deleting,
   productEditing,
@@ -101,10 +103,7 @@ const {
               <button
                 class="primary"
                 :disabled="busy"
-                @click="
-                  editing = undefined;
-                  showForm = true;
-                "
+                @click="openPreference()"
               >
                 ＋ 保存喜好
               </button>
@@ -202,6 +201,14 @@ const {
               手續費率 {{ money(p.feeRate * 100) }}% · {{ p.currency }}
             </p>
             <button
+              v-if="section === 'products'"
+              class="primary"
+              :disabled="busy || loading"
+              @click="openPreference(p)"
+            >
+              ＋ 加入喜好
+            </button>
+            <button
               v-if="section === 'admin' && canEdit(p)"
               class="primary"
               @click="productEditing = p"
@@ -237,6 +244,7 @@ const {
       :products="products"
       :accounts="accounts"
       :editing="editing"
+      :initial-product-id="initialProductId"
       :busy="busy"
       @save="save"
       @cancel="showForm = false"

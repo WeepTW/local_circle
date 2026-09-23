@@ -1,3 +1,4 @@
+import { verifyCatalogPreferences } from "../test-support/catalog-preference";
 import { login } from "../test-support/login";
 import { test, expect } from "@playwright/test";
 test("catalog uses reference prices without market-data requests", async ({ page }) => {
@@ -93,4 +94,10 @@ test("login requires valid credentials and logout hides the registry", async ({ 
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: "../tmp/test-results/login-mobile.png", fullPage: true });
+});
+
+test("each catalog item opens a preselected preference dialog", async ({ page }) => {
+  await page.goto("./#/products");
+  await login(page);
+  await verifyCatalogPreferences(page);
 });

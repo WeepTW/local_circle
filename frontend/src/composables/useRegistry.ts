@@ -21,6 +21,7 @@ export function useRegistry() {
     error = ref(""),
     notice = ref(""),
     showForm = ref(false);
+  const initialProductId = ref<number>();
   const editing = ref<Preference>(),
     deleting = ref<Preference>(),
     productEditing = ref<Product>();
@@ -77,6 +78,12 @@ export function useRegistry() {
     } finally {
       if (g === generation) loading.value = false;
     }
+  }
+  function openPreference(product?: Product) {
+    if (busy.value || loading.value) return;
+    editing.value = undefined;
+    initialProductId.value = product?.productId;
+    showForm.value = true;
   }
   async function mutate(
     operation: () => Promise<unknown>,
@@ -157,6 +164,8 @@ export function useRegistry() {
     error,
     notice,
     showForm,
+    initialProductId,
+    openPreference,
     editing,
     deleting,
     productEditing,
