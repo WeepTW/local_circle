@@ -12,7 +12,7 @@ export async function verifyCatalogPreferences(page: Page) {
     await dialog.getByLabel("預計數量", { exact: true }).fill("2");
     await dialog.getByRole("button", { name: "確認保存", exact: true }).click();
     await expect(dialog).toHaveCount(0);
-    await expect(page.getByRole("status")).toContainText("喜好已保存");
+    await expect(page.getByRole("status").filter({ hasText: "喜好已保存" })).toBeVisible();
   }
   await page.getByRole("link", { name: "我的喜好", exact: true }).click();
   await expect(page.locator("tbody tr")).toHaveCount(3);
