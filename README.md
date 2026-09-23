@@ -24,21 +24,37 @@ Run `35670087560` built artifacts with restrictive permissions because secret-fi
 
 ## Run the complete application
 
-Requirements: Java 21, Maven 3.9+, Node 24 (version pinned in `.node-version`), Docker Compose, Bash and Python 3. Use a Docker-enabled WSL/Linux shell.
+Requirements: Java 21, Maven 3.9+, Node 24 (version pinned in `.node-version`), Docker Compose v2, Git, OpenSSL, Bash and Python 3. Use a Docker-enabled WSL/Linux shell.
+
+Keep a WSL terminal open. Clone into the Linux filesystem (for example `~/projects`) for faster dependency installation and builds:
 
 ```bash
+mkdir -p ~/projects
+cd ~/projects
+git clone https://github.com/WeepTW/local_circle.git
+cd local_circle
 bash scripts/bootstrap.sh
 bash scripts/deploy.sh
 ```
 
-Open http://localhost:8088/preferences. Bootstrap creates random database passwords in gitignored `.env`. Nginx, Java and MySQL run as separate services. Only loopback web/database development ports are published.
+For a second checkout or review copy, choose an unused project name and ports **before the first bootstrap**:
+
+```bash
+COMPOSE_PROJECT_NAME=local_circle_review DB_PORT=13317 WEB_PORT=18088 bash scripts/bootstrap.sh
+bash scripts/deploy.sh
+```
+
+Bootstrap saves those settings in the new `.env`, so later `docker compose stop` / `up` commands target the same project without extra shell exports. The review URL is `http://127.0.0.1:18088/preferences`. If `.env` already exists, edit its project/port settings explicitly; bootstrap never replaces existing passwords. Environment exports override `.env` for that shell only. The scripts refuse to modify containers belonging to another checkout with the same project name. Do not reuse another installation's persistent volume or delete it to bypass a startup error.
+
+
+For the default settings, open http://localhost:8088/preferences; deploy prints the actual bound URL. Bootstrap creates random database passwords in gitignored `.env`. Nginx, Java and MySQL run as separate services. Only loopback web/database development ports are published.
 
 ```bash
 docker compose stop          # preserve data
 docker compose up -d --wait  # restart
 ```
 
-Keep a WSL session open while using the application. The demonstration login selects a development identity; its public credentials are not production authentication. The default backend profile rejects it. Do not expose the local API to an untrusted network.
+Stop the host Maven process before starting another host backend on port 8089. Keep a WSL session open while using the application. The demonstration login selects a development identity; its public credentials are not production authentication. The default backend profile rejects it. Do not expose the local API to an untrusted network.
 
 ## Development
 
@@ -54,7 +70,7 @@ npm ci
 VITE_DEMO_LOGIN=true npm run dev
 ```
 
-Vite on 5173 proxies API requests to 8089. The browser never connects to MySQL. The application database role can execute procedures but cannot directly read or modify tables.
+Run bootstrap before development to start MySQL. Source `.env` in the backend terminal as shown; the configured `DB_PORT` is used automatically unless `DB_URL` explicitly overrides it. Vite on 5173 proxies API requests to 8089. The browser never connects to MySQL. The application database role can execute procedures but cannot directly read or modify tables.
 
 ## Verify
 
@@ -127,3 +143,7 @@ The login screen uses a `LoginProvider` contract in `frontend/src/auth/contracts
 Local deploy/test scripts and Pages builds explicitly set `VITE_DEMO_LOGIN=true`. A plain `npm run build` excludes the demo module. Vite chooses the provider at build time; `scripts/test-frontend.sh` checks that production assets contain none of the sample passwords.
 
 For a production integration, leave `VITE_DEMO_LOGIN` unset or false and replace `frontend/src/auth/productionProvider.ts` with server-verified login. The default provider refuses every login. The complete `auth/demo/` folder can then be deleted without changing the login screen; remove the demo-only browser fixtures and explicit demo flags from your deployment/tests too. Replace the local HTTP identity header with real server session handling when implementing that provider. Disabling dropdown hints alone does not secure the backend. `RegistryRepository` remains unchanged.
+
+## Functional boundaries
+
+Preference creation selects an existing active product, an owned account reference and quantity. Product names, reference prices and fee rates are maintained by authorized product administrators. There is no arbitrary product-creation form or user-specific override of those fields. Accounts are pre-registered references and are displayed masked; the application does not collect a full account number. These boundaries should be considered when assessing a requirement for direct entry of product fields or complete account numbers.
